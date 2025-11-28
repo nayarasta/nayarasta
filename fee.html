@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fee Structure - NayaRasta.com</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #1a1a1a;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 50px 0;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            letter-spacing: -3px;
+        }
+
+        .header p {
+            font-size: 1.4rem;
+            color: #555;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 35px;
+            margin-bottom: 80px;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 28px;
+            padding: 45px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            border-radius: 28px 28px 0 0;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .pricing-card.featured {
+            border: 2px solid #667eea;
+            transform: scale(1.05);
+            box-shadow: 0 20px 50px rgba(102, 126, 234, 0.2);
+        }
+
+        .pricing-card.featured::after {
+            content: "⭐ MOST POPULAR";
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 30px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 35px;
+            position: relative;
+        }
+
+        .plan-name {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .price {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .price-period {
+            color: #666;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .offer-badge {
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin: 20px 0;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .seats-counter {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-weight: 800;
+            margin: 20px 0;
+            font-size: 1rem;
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .features-list {
+            list-style: none;
+            margin: 35px 0;
+        }
+
+        .features-list li {
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            position: relative;
+            padding-left: 40px;
+            color: #333;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .features-list li:last-child {
+            border-bottom: none;
+        }
+
+        .features-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: 900;
+            font-size: 1rem;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 3px 10px rgba(76, 175, 80, 0.3);
+        }
+
+        .features-list li:hover {
+            color: #1a1a1a;
+            padding-left: 45px;
+        }
+
+        .cta-button {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: block;
+            text-decoration: none;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .cta-button:hover {
+            background: linear-gradient(135deg, #5a6fd8, #6b5b95);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .add-ons-section {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 35px;
+            padding: 60px;
+            margin-top: 50px;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.1);
+        }
+
+        .add-ons-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .add-ons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .add-on-item {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 35px;
+            border-radius: 25px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.4s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .add-on-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .add-on-item:hover {
+            border-color: rgba(102, 126, 234, 0.4);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+        }
+
+        .add-on-item:hover::before {
+            transform: scaleX(1);
+        }
+
+        .add-on-item h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .add-on-price {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 20px 0;
+        }
+
+        .add-on-item p {
+            color: #555;
+            line-height: 1.6;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .terms-section {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 50px;
+            margin-top: 50px;
+            text-align: center;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.1);
+        }
+
+        .terms-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 35px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .terms-text {
+            color: #444;
+            line-height: 2;
+            font-size: 1.1rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            font-weight: 500;
+        }
+
+        .terms-text p {
+            margin-bottom: 20px;
+        }
+
+        .terms-text strong {
+            color: #1a1a1a;
+            font-weight: 800;
+        }
+
+        .terms-text a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 800;
+            transition: all 0.3s ease;
+            padding: 6px 12px;
+            border-radius: 10px;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .terms-text a:hover {
+            background: rgba(102, 126, 234, 0.2);
+            color: #5a6fd8;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .pricing-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+            
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .pricing-card {
+                padding: 35px;
+            }
+
+            .add-ons-section {
+                padding: 40px 25px;
+            }
+
+            .terms-section {
+                padding: 40px 25px;
+            }
+
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .price {
+                font-size: 3rem;
+            }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a6fd8, #6b5b95);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>NayaRasta.com</h1>
+            <p>Complete MDCAT Preparation Platform - Your Path to Medical Excellence</p>
+        </div>
+
+        <div class="pricing-grid">
+            <!-- Free Trial Card -->
+            <div class="pricing-card">
+                <div class="card-header">
+                    <div class="plan-name">Free Trial</div>
+                    <div class="price">Rs 0</div>
+                    <div class="price-period">First Month</div>
+                    <div class="offer-badge">🚀 Limited Time - First 100 Users Only!</div>
+                    <div class="seats-counter">⚡ Only 23 Seats Left out of 100! ⚡</div>
+                </div>
+                <ul class="features-list">
+                    <li>Unlimited MCQ Practice</li>
+                    <li>All Chapter-wise Tests</li>
+                    <li>Full Book Mock Tests</li>
+                    <li>Complete Study Notes</li>
+                    <li>Advanced Result Analytics</li>
+                    <li>Personalized Study Feed</li>
+                    <li>Performance Tracking</li>
+                    <li>Live Doubt Sessions (Limited)</li>
+                    <li>Expert Teacher Support</li>
+                    <li>Topper Mentorship Session</li>
+                    <li>Community Access</li>
+                </ul>
+                <a href="https://api.whatsapp.com/send?phone=923328335332&text=Hi Admin! I want to register for the FREE TRIAL (First 100 users offer)" class="cta-button">Get Free Access</a>
+            </div>
+
+            <!-- Premium Monthly Card -->
+            <div class="pricing-card featured">
+                <div class="card-header">
+                    <div class="plan-name">Premium Monthly</div>
+                    <div class="price">Rs 100</div>
+                    <div class="price-period">per month</div>
+                </div>
+                <ul class="features-list">
+                    <li>Unlimited MCQ Practice</li>
+                    <li>All Chapter-wise Tests</li>
+                    <li>Full Book Mock Tests</li>
+                    <li>Complete Study Notes</li>
+                    <li>Advanced Result Analytics</li>
+                    <li>Personalized Study Feed</li>
+                    <li>Performance Tracking</li>
+                    <li>1 Live Doubt Session/Month</li>
+                    <li>Topper Mentorship Session</li>
+                    <li>Priority Customer Support</li>
+                    <li>Live Doubt Sessions (Limited)</li>
+                    <li>Expert Teacher Support</li>
+                    <li>Community Access</li>
+                </ul>
+                <a href="https://api.whatsapp.com/send?phone=923328335332&text=Hi Admin! I want to subscribe to the PREMIUM MONTHLY plan (Rs 100/month)" class="cta-button">Get 1-Month Access</a>
+            </div>
+
+            <!-- Premium 6 Months -->
+            <div class="pricing-card">
+                <div class="card-header">
+                    <div class="plan-name">6-Month Package</div>
+                    <div class="price">Rs 550</div>
+                    <div class="price-period">6 months (Save Rs 50!)</div>
+                </div>
+                <ul class="features-list">
+                    <li>All Premium Monthly Features</li>
+                    <li>6 Live Doubt Sessions</li>
+                    <li>Extended Performance Reports</li>
+                    <li>Bonus Study Materials</li>
+                    <li>Priority Support</li>
+                    <li>Money-back Guarantee</li>
+                    <li>Live Doubt Session/Month</li>
+                    <li>Expert Teacher Support</li>
+                    <li>Topper Mentorship Session</li>
+                    <li>Priority Direct Admin Support</li>
+                    <li>All Chapter-wise Tests</li>
+                    <li>Full Book Mock Tests</li>
+                    <li>Complete Study Notes</li>
+                    <li>Advanced Result Analytics</li>
+                </ul>
+                <a href="https://api.whatsapp.com/send?phone=923328335332&text=Hi Admin! I want to get the 6-MONTH PACKAGE (Rs 550 - Save Rs 50)" class="cta-button">Get 6-Month Access</a>
+            </div>
+        </div>
+
+        <div class="add-ons-section">
+            <h2 class="add-ons-title">Additional Study Materials & Services</h2>
+            <div class="add-ons-grid">
+                <div class="add-on-item">
+                    <h3>Premium Notes Bundle</h3>
+                    <div class="add-on-price">Rs 10/Notes</div>
+                    <p>Complete handwritten notes by toppers, formatted for easy revision and quick understanding</p>
+                </div>
+                <div class="add-on-item">
+                    <h3>Subject-wise Notes</h3>
+                    <div class="add-on-price">Rs 10</div>
+                    <p>Individual subject notes (Biology, Chemistry, Physics, English) with detailed explanations</p>
+                </div>
+                <div class="add-on-item">
+                    <h3>Extra Doubt Sessions</h3>
+                    <div class="add-on-price">FREE</div>
+                    <p>Additional 1-on-1 doubt clearing sessions with expert teachers and MDCAT toppers</p>
+                </div>
+                <div class="add-on-item">
+                    <h3>Mock Test Series</h3>
+                    <div class="add-on-price">FREE</div>
+                    <p>Exclusive mock tests based on latest MDCAT pattern with detailed performance analysis</p>
+                </div>
+                <div class="add-on-item">
+                    <h3>Revision Cards</h3>
+                    <div class="add-on-price">FREE</div>
+                    <p>Quick revision flashcards for important formulas, concepts, and key points</p>
+                </div>
+                <div class="add-on-item">
+                    <h3>Success Stories Bundle</h3>
+                    <div class="add-on-price">FREE</div>
+                    <p>Video interviews and exclusive tips from MDCAT toppers and successful medical students</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="terms-section">
+            <h3 class="terms-title">Special Offers & Terms</h3>
+            <div class="terms-text">
+                <p><strong>🎉 Launch Offer:</strong> First 100 users get complete premium access FREE for 1 month!</p>
+                <p><strong>💰 No Hidden Charges:</strong> All prices are transparent and inclusive. No additional fees ever.</p>
+                <p><strong>🔄 Easy Cancellation:</strong> Cancel your subscription anytime with just one click. No questions asked.</p>
+                <p><strong>📱 Multi-Device Access:</strong> Use on phone, tablet, laptop, and desktop. Sync across all devices.</p>
+                <p><strong>🎓 Money-Back Guarantee:</strong> 7-day money-back guarantee on all paid plans. Your satisfaction guaranteed.</p>
+                <p><strong>🏆 Referral Bonus:</strong> Refer friends and get 1 month free extension plus exclusive rewards!</p>
+                <p><strong>📞 24/7 Support:</strong> For queries and support call us at <a href="tel:03328335332">033-28335332</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

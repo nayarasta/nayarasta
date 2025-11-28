@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes - Doctor Portal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Subtle paper texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20px 80px, #00000008, transparent),
+                radial-gradient(circle at 80px 20px, #00000008, transparent),
+                radial-gradient(circle at 40px 40px, #00000008, transparent);
+            background-repeat: repeat;
+            background-size: 100px 100px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 
+                0 32px 64px rgba(0,0,0,0.08),
+                0 16px 32px rgba(0,0,0,0.04),
+                inset 0 1px 0 rgba(255,255,255,0.9);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Spiral binding effect */
+        .container::before {
+            content: '';
+            position: absolute;
+            left: 60px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #e74c3c 0%, #c0392b 50%, #e74c3c 100%);
+            z-index: 1;
+        }
+
+        /* Hole punch effects */
+        .container::after {
+            content: '';
+            position: absolute;
+            left: 45px;
+            top: 80px;
+            width: 12px;
+            height: 12px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            box-shadow: 
+                0 60px 0 #f8f9fa,
+                0 120px 0 #f8f9fa,
+                0 180px 0 #f8f9fa,
+                0 240px 0 #f8f9fa,
+                0 300px 0 #f8f9fa,
+                0 360px 0 #f8f9fa,
+                0 420px 0 #f8f9fa;
+            z-index: 2;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px 40px 40px 80px;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 2px,
+                rgba(255,255,255,0.03) 2px,
+                rgba(255,255,255,0.03) 4px
+            );
+            animation: slidePattern 20s linear infinite;
+        }
+
+        @keyframes slidePattern {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(-20px) translateY(-20px); }
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 8px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            font-weight: 300;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-content {
+            padding: 40px 40px 40px 80px;
+            background: #ffffff;
+            position: relative;
+        }
+
+        /* Notebook lines effect */
+        .main-content::before {
+            content: '';
+            position: absolute;
+            left: 80px;
+            right: 40px;
+            top: 0;
+            bottom: 0;
+            background-image: repeating-linear-gradient(
+                to bottom,
+                transparent 0px,
+                transparent 31px,
+                #e3f2fd 31px,
+                #e3f2fd 33px
+            );
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .filters {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 10;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f8f9fa;
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .filter-group:hover {
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: #495057;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        select, input {
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: #ffffff;
+            color: #495057;
+            min-width: 120px;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 12px 24px rgba(54, 209, 220, 0.3);
+        }
+
+        .btn-request {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #8b4513;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-request:hover {
+            box-shadow: 0 8px 16px rgba(252, 182, 159, 0.4);
+        }
+
+        .admin-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            padding: 32px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            border: 2px solid #e9ecef;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c);
+        }
+
+        .admin-section h2 {
+            color: #2c3e50;
+            margin-bottom: 24px;
+            font-weight: 600;
+            font-size: 1.5em;
+        }
+
+        .admin-section h3 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-group small {
+            color: #6c757d;
+            font-size: 12px;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 28px;
+            margin-top: 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .note-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 
+                0 8px 32px rgba(0,0,0,0.08),
+                0 4px 16px rgba(0,0,0,0.04);
+            border: 1px solid #f1f3f4;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .note-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .note-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .note-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 
+                0 20px 48px rgba(0,0,0,0.12),
+                0 8px 24px rgba(0,0,0,0.08);
+            border-color: #667eea;
+        }
+
+        .note-title {
+            font-size: 1.4em;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .note-subject {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .note-description {
+            color: #6c757d;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .note-price {
+            font-size: 1.3em;
+            color: #28a745;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding: 8px 0;
+            border-top: 1px solid #f1f3f4;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .note-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 80px 20px;
+            font-size: 18px;
+            color: #6c757d;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 16px;
+            margin: 20px 0;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #fee 0%, #fdd 100%);
+            color: #dc3545;
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            border-left: 4px solid #dc3545;
+            box-shadow: 0 4px 16px rgba(220, 53, 69, 0.1);
+        }
+
+        .error-message h2 {
+            margin-bottom: 12px;
+            font-size: 1.3em;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%);
+            color: #155724;
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            border-left: 4px solid #28a745;
+            box-shadow: 0 4px 16px rgba(40, 167, 69, 0.1);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .container::before,
+            .container::after {
+                display: none;
+            }
+
+            .header,
+            .main-content {
+                padding: 24px;
+            }
+
+            .main-content::before {
+                left: 24px;
+                right: 24px;
+            }
+
+            .header h1 {
+                font-size: 2.2em;
+            }
+
+            .filters {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .notes-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .note-actions {
+                justify-content: center;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .note-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .note-card:nth-child(2) { animation-delay: 0.1s; }
+        .note-card:nth-child(3) { animation-delay: 0.2s; }
+        .note-card:nth-child(4) { animation-delay: 0.3s; }
+        .note-card:nth-child(5) { animation-delay: 0.4s; }
+        .note-card:nth-child(6) { animation-delay: 0.5s; }
+
+        /* User Statistics Cards */
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .stat-number {
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 32px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f1f3f4;
+        }
+
+        .modal-header h3 {
+            color: #2c3e50;
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #dc3545;
+        }
+
+        .user-preview {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            padding: 16px;
+            border-radius: 12px;
+            margin: 16px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .user-preview.not-found {
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+            border-left-color: #dc3545;
+        }
+
+        .access-item {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid #28a745;
+        }
+
+        .access-item .note-title {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .access-item .note-subject {
+            font-size: 12px;
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 8px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+        }
+
+        .dashboard-stat {
+            text-align: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .favorite-btn {
+            background: none !important;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            padding: 4px;
+        }
+
+        .favorite-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .favorite-btn.active {
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .note-actions-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-new {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+        }
+
+        .badge-popular {
+            background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
+            color: #2c3e50;
+        }
+
+        .note-stats {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-size: 12px;
+            color: #6c757d;
+            margin: 8px 0;
+        }
+
+        .note-stats span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f3f4;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Notes Portal</h1>
+            <p>Access educational materials and resources</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Loading Message -->
+            <div id="loading" class="loading">
+                Loading your notes portal...
+            </div>
+
+            <!-- Not Logged In Message -->
+            <div id="not-logged-in" class="error-message hidden">
+                <h2>🔐 Login Required</h2>
+                <p>You need to login first to access the notes portal.</p>
+                <a href="https://doctors.page.gd/?i=1" class="btn" style="margin-top: 15px;">Go to Login</a>
+            </div>
+
+            <!-- Main Notes Interface -->
+            <div id="notes-interface" class="hidden">
+                <!-- Admin Section -->
+                <div id="admin-section" class="admin-section hidden">
+                    <h2>👨‍💼 Admin Panel</h2>
+                    
+                    <!-- User List Section -->
+                    <div class="form-group">
+                        <h3>📋 User Management</h3>
+                        <div style="display: flex; gap: 12px; margin-bottom: 20px; align-items: center; flex-wrap: wrap;">
+                            <button onclick="loadUserList()" class="btn btn-secondary">📥 Load Users</button>
+                            <button onclick="toggleUserList()" class="btn btn-secondary">👁️ Toggle List</button>
+                            <button onclick="loadUserStats()" class="btn" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);">📊 User Stats</button>
+                        </div>
+                        
+                        <!-- User Statistics -->
+                        <div id="user-stats" class="hidden" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                            <div class="stat-card">
+                                <div class="stat-number" id="total-users">0</div>
+                                <div class="stat-label">Total Users</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="paid-users">0</div>
+                                <div class="stat-label">Fee Paid</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="unpaid-users">0</div>
+                                <div class="stat-label">Fee Pending</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="admin-users">0</div>
+                                <div class="stat-label">Admins</div>
+                            </div>
+                        </div>
+                        
+                        <div id="user-list-container" class="hidden">
+                            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+                                <input type="text" id="user-search" placeholder="🔍 Search users..." style="flex: 1; font-size: 14px; padding: 8px 12px;">
+                                <select id="user-filter" style="font-size: 14px; padding: 8px 12px;">
+                                    <option value="">All Users</option>
+                                    <option value="paid">Fee Paid</option>
+                                    <option value="unpaid">Fee Pending</option>
+                                    <option value="admin">Admins</option>
+                                </select>
+                            </div>
+                            <div id="user-list" style="max-height: 350px; overflow-y: auto; background: #f8f9fa; border-radius: 12px; padding: 16px; border: 1px solid #e9ecef;">
+                                <!-- Users will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <h3>Add New Note</h3>
+                        <form id="add-note-form" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="note-title">Note Title:</label>
+                                <input type="text" id="note-title" name="title" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="note-subject">Subject:</label>
+                                <select id="note-subject" name="subject" required>
+                                    <option value="">Select Subject</option>
+                                    <option value="physics">Physics</option>
+                                    <option value="biology">Biology</option>
+                                    <option value="chemistry">Chemistry</option>
+                                    <option value="english">English</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="note-description">Description:</label>
+                                <textarea id="note-description" name="description" placeholder="Brief description of the note content"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="note-file">Upload File (PDF, DOC, etc.):</label>
+                                <input type="file" id="note-file" name="note_file" accept=".pdf,.doc,.docx,.txt" required>
+                                <small>Maximum file size: 10MB. Supported formats: PDF, DOC, DOCX, TXT</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="note-price">Price (PKR):</label>
+                                <input type="number" id="note-price" name="price" min="0" step="0.01" placeholder="0.00">
+                            </div>
+                            
+                            <button type="submit" class="btn">Add Note</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="subject-filter">Filter by Subject:</label>
+                        <select id="subject-filter">
+                            <option value="">All Subjects</option>
+                            <option value="physics">Physics</option>
+                            <option value="biology">Biology</option>
+                            <option value="chemistry">Chemistry</option>
+                            <option value="english">English</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="search-input">Search:</label>
+                        <input type="text" id="search-input" placeholder="Search notes...">
+                    </div>
+
+                    <!-- User-specific features -->
+                    <div class="filter-group" id="user-features">
+                        <button onclick="showMyAccess()" class="btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">📚 My Notes</button>
+                        <button onclick="showFavorites()" class="btn" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">⭐ Favorites</button>
+                        <button onclick="loadNotes()" class="btn btn-secondary">🔄 Refresh</button>
+                    </div>
+                </div>
+
+                <!-- User Dashboard -->
+                <div id="user-dashboard" class="hidden" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; border-radius: 16px; margin-bottom: 24px;">
+                    <h3 style="margin-bottom: 16px;">📊 My Dashboard</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
+                        <div class="dashboard-stat">
+                            <div id="my-total-notes" style="font-size: 2em; font-weight: 700;">0</div>
+                            <div style="font-size: 0.9em; opacity: 0.9;">Total Notes</div>
+                        </div>
+                        <div class="dashboard-stat">
+                            <div id="my-accessible-notes" style="font-size: 2em; font-weight: 700;">0</div>
+                            <div style="font-size: 0.9em; opacity: 0.9;">My Access</div>
+                        </div>
+                        <div class="dashboard-stat">
+                            <div id="my-favorites" style="font-size: 2em; font-weight: 700;">0</div>
+                            <div style="font-size: 0.9em; opacity: 0.9;">Favorites</div>
+                        </div>
+                        <div class="dashboard-stat">
+                            <div id="my-requests" style="font-size: 2em; font-weight: 700;">0</div>
+                            <div style="font-size: 0.9em; opacity: 0.9;">Requests Made</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <div id="message-container"></div>
+
+                <!-- Notes Grid -->
+                <div id="notes-grid" class="notes-grid">
+                    <!-- Notes will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Access Management Modal -->
+    <div id="accessModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">🔑 Manage Access</h3>
+                <span class="close" onclick="closeAccessModal()">&times;</span>
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <h4 style="color: #495057; margin-bottom: 12px;">Grant Access</h4>
+                <div style="display: flex; gap: 12px; align-items: end;">
+                    <div style="flex: 1;">
+                        <label for="user-id-input" style="display: block; font-size: 14px; color: #495057; margin-bottom: 4px;">User ID:</label>
+                        <input type="number" id="user-id-input" placeholder="Enter User ID" style="width: 100%; padding: 10px 12px; font-size: 14px;" oninput="previewUser()">
+                    </div>
+                    <button onclick="grantAccessToUser()" class="btn" style="padding: 10px 16px;">✅ Grant</button>
+                </div>
+                <div id="user-preview" class="user-preview hidden">
+                    <!-- User preview will appear here -->
+                </div>
+            </div>
+
+            <div>
+                <h4 style="color: #495057; margin-bottom: 12px;">Current Access</h4>
+                <div id="current-access" style="max-height: 200px; overflow-y: auto;">
+                    <!-- Current access list will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let allNotes = [];
+        let allUsers = [];
+        let currentNoteId = null;
+        let filteredUsers = [];
+        let userFavorites = JSON.parse(localStorage.getItem('userFavorites') || '[]');
+        let userRequests = JSON.parse(localStorage.getItem('userRequests') || '[]');
+        let currentView = 'all'; // 'all', 'my-access', 'favorites'
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkUserSession();
+        });
+
+        // Check if user is logged in
+        async function checkUserSession() {
+            try {
+                const response = await fetch('check_session.php');
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    currentUser = data.data;
+                    showNotesInterface();
+                    loadNotes();
+                } else {
+                    showLoginRequired();
+                }
+            } catch (error) {
+                console.error('Error checking session:', error);
+                showLoginRequired();
+            }
+        }
+
+        function showNotesInterface() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('not-logged-in').classList.add('hidden');
+            document.getElementById('notes-interface').classList.remove('hidden');
+
+            // Show admin section if user is admin
+            if (currentUser && currentUser.role === 'admin') {
+                document.getElementById('admin-section').classList.remove('hidden');
+                setupAdminForm();
+            } else {
+                // Show user dashboard for regular users
+                document.getElementById('user-dashboard').classList.remove('hidden');
+                updateUserDashboard();
+            }
+        }
+
+        function showLoginRequired() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('notes-interface').classList.add('hidden');
+            document.getElementById('not-logged-in').classList.remove('hidden');
+        }
+
+        // Setup admin form submission
+        function setupAdminForm() {
+            const form = document.getElementById('add-note-form');
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Show loading message
+                showMessage('Adding note, please wait...', true);
+                
+                const formData = new FormData(form);
+                
+                // Debug: Log form data
+                console.log('Form data being sent:');
+                for (let pair of formData.entries()) {
+                    console.log(pair[0] + ': ' + pair[1]);
+                }
+                
+                try {
+                    const response = await fetch('add_note_debug.php', {  // Use debug version first
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    console.log('Server response:', data);
+                    
+                    // Show debug info if available
+                    if (data.debug) {
+                        console.log('Debug info:', data.debug);
+                    }
+                    
+                    showMessage(data.message + (data.debug ? ' (Check console for debug info)' : ''), data.status === 'success');
+                    
+                    if (data.status === 'success') {
+                        form.reset();
+                        loadNotes();
+                    }
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    showMessage('Network error: ' + error.message, false);
+                }
+            });
+        }
+
+        // Load notes
+        async function loadNotes() {
+            try {
+                const response = await fetch('get_notes.php');
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    allNotes = data.data;
+                    displayNotes(allNotes);
+                } else {
+                    showMessage(data.message, false);
+                }
+            } catch (error) {
+                showMessage('Error loading notes. Please try again.', false);
+            }
+        }
+
+        // Display notes
+        function displayNotes(notes) {
+            const grid = document.getElementById('notes-grid');
+            
+            if (notes.length === 0) {
+                let message = 'No notes found.';
+                if (currentView === 'my-access') {
+                    message = '📚 No notes accessible yet. Request access to notes you need!';
+                } else if (currentView === 'favorites') {
+                    message = '⭐ No favorites yet. Click the star icon on notes to add them!';
+                }
+                grid.innerHTML = `<div class="loading">${message}</div>`;
+                return;
+            }
+
+            grid.innerHTML = notes.map(note => {
+                const isFavorite = userFavorites.includes(note.id);
+                const hasRequested = userRequests.includes(note.id);
+                
+                // Add badges for new or popular notes
+                let badges = '';
+                if (isNoteNew(note)) {
+                    badges += '<span class="badge badge-new">New</span>';
+                }
+                
+                return `
+                <div class="note-card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                        <div class="note-title">${escapeHtml(note.title)}</div>
+                        ${currentUser.role !== 'admin' ? `
+                            <button class="favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite(${note.id})">
+                                ${isFavorite ? '⭐' : '☆'}
+                            </button>
+                        ` : ''}
+                    </div>
+                    
+                    <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 16px;">
+                        <div class="note-subject">${note.subject}</div>
+                        ${badges}
+                    </div>
+                    
+                    <div class="note-description">${escapeHtml(note.description || 'No description available')}</div>
+                    
+                    <div class="note-stats">
+                        <span>💰 PKR ${note.price}</span>
+                        <span>📅 ${formatDate(note.created_at || new Date())}</span>
+                        ${note.download_count ? `<span>📥 ${note.download_count} downloads</span>` : ''}
+                    </div>
+                    
+                    <div class="note-actions">
+                        ${currentUser.role === 'admin' ? `
+                            <button onclick="openAccessModal(${note.id}, '${escapeHtml(note.title)}')" class="btn btn-secondary">🔑 Manage Access</button>
+                        ` : `
+                            ${note.hasAccess ? `
+                                <div class="note-actions-row" style="width: 100%;">
+                                    <a href="download_note.php?id=${note.id}" class="btn" target="_blank" onclick="trackDownload(${note.id})">📥 Download</a>
+                                    <span style="color: #28a745; font-size: 12px; font-weight: 600;">✅ Access Granted</span>
+                                </div>
+                            ` : `
+                                <button onclick="requestAccess(${note.id})" class="btn btn-request ${hasRequested ? 'requested' : ''}">
+                                    ${hasRequested ? '⏳ Requested' : '🔒 Request Access'}
+                                </button>
+                            `}
+                        `}
+                    </div>
+                </div>
+            `;
+            }).join('');
+            
+            updateUserDashboard();
+        }
+
+        // Request access to a note
+        function requestAccess(noteId) {
+            // Mark as requested
+            if (!userRequests.includes(noteId)) {
+                userRequests.push(noteId);
+                localStorage.setItem('userRequests', JSON.stringify(userRequests));
+            }
+            
+            const whatsappUrl = `https://wa.me/923328335332?text=Hi, I would like to request access to note ID: ${noteId}`;
+            window.open(whatsappUrl, '_blank');
+            
+            // Update the display to show requested state
+            displayNotes(currentView === 'all' ? allNotes : getFilteredNotes());
+            showMessage('Request sent! We\'ll process your request soon.', true);
+        }
+
+        // Filter notes
+        document.getElementById('subject-filter').addEventListener('change', filterNotes);
+        document.getElementById('search-input').addEventListener('input', filterNotes);
+
+        function filterNotes() {
+            const subjectFilter = document.getElementById('subject-filter').value;
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+
+            let filteredNotes = allNotes.filter(note => {
+                const matchesSubject = !subjectFilter || note.subject === subjectFilter;
+                const matchesSearch = !searchTerm || 
+                    note.title.toLowerCase().includes(searchTerm) ||
+                    (note.description && note.description.toLowerCase().includes(searchTerm));
+                
+                return matchesSubject && matchesSearch;
+            });
+
+            displayNotes(filteredNotes);
+        }
+
+        // Show message
+        function showMessage(message, isSuccess) {
+            const container = document.getElementById('message-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = isSuccess ? 'success-message' : 'error-message';
+            messageDiv.textContent = message;
+            
+            container.innerHTML = '';
+            container.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 5000);
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Admin function to grant access
+        async function grantAccess(noteId) {
+            const userId = prompt('Enter User ID to grant access:');
+            if (!userId) return;
+
+            try {
+                const response = await fetch('grant_access.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        note_id: noteId,
+                        user_id: parseInt(userId)
+                    })
+                });
+
+                const data = await response.json();
+                showMessage(data.message, data.status === 'success');
+            } catch (error) {
+                showMessage('Error granting access. Please try again.', false);
+            }
+        }
+
+        // Load user list for admin
+        async function loadUserList() {
+            try {
+                showMessage('Loading users...', true);
+                const response = await fetch('user_list.php');
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    allUsers = data.data;
+                    displayUserList(allUsers);
+                    document.getElementById('user-list-container').classList.remove('hidden');
+                    showMessage('Users loaded successfully!', true);
+                } else {
+                    showMessage(data.message, false);
+                }
+            } catch (error) {
+                showMessage('Error loading users. Please try again.', false);
+            }
+        }
+
+        // Display user list
+        function displayUserList(users) {
+            const userListDiv = document.getElementById('user-list');
+            
+            if (users.length === 0) {
+                userListDiv.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">No users found.</div>';
+                return;
+            }
+
+            userListDiv.innerHTML = `
+                <div style="display: grid; grid-template-columns: auto 1fr auto auto auto; gap: 12px; align-items: center; font-weight: 600; padding-bottom: 12px; border-bottom: 2px solid #dee2e6; margin-bottom: 12px; color: #495057;">
+                    <div>ID</div>
+                    <div>Username</div>
+                    <div>Role</div>
+                    <div>Fee Paid</div>
+                    <div>Actions</div>
+                </div>
+                ${users.map(user => `
+                    <div style="display: grid; grid-template-columns: auto 1fr auto auto auto; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid #f1f3f4;">
+                        <div style="font-weight: 600; color: #667eea; background: #f8f9ff; padding: 4px 8px; border-radius: 6px; font-size: 14px;">${user.id}</div>
+                        <div style="color: #495057; font-weight: 500;">${escapeHtml(user.username)}</div>
+                        <div style="color: ${user.role === 'admin' ? '#dc3545' : '#28a745'}; font-weight: 500; text-transform: capitalize;">${user.role}</div>
+                        <div style="color: ${user.fee_paid ? '#28a745' : '#dc3545'}; font-weight: 500;">
+                            ${user.fee_paid ? '✅ Paid' : '❌ Not Paid'}
+                        </div>
+                        <div>
+                            <button onclick="viewUserAccess(${user.id}, '${escapeHtml(user.username)}')" class="btn btn-small" style="background: linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%);">👁️ View Access</button>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // Toggle user list visibility
+        function toggleUserList() {
+            const container = document.getElementById('user-list-container');
+            container.classList.toggle('hidden');
+        }
+
+        // Load and display user statistics
+        async function loadUserStats() {
+            if (allUsers.length === 0) {
+                await loadUserList();
+            }
+            
+            const totalUsers = allUsers.length;
+            const paidUsers = allUsers.filter(user => user.fee_paid).length;
+            const unpaidUsers = totalUsers - paidUsers;
+            const adminUsers = allUsers.filter(user => user.role === 'admin').length;
+            
+            document.getElementById('total-users').textContent = totalUsers;
+            document.getElementById('paid-users').textContent = paidUsers;
+            document.getElementById('unpaid-users').textContent = unpaidUsers;
+            document.getElementById('admin-users').textContent = adminUsers;
+            
+            document.getElementById('user-stats').classList.remove('hidden');
+        }
+
+        // Filter users functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup user filtering after DOM loads
+            setTimeout(() => {
+                const userSearch = document.getElementById('user-search');
+                const userFilter = document.getElementById('user-filter');
+                
+                if (userSearch) {
+                    userSearch.addEventListener('input', filterUsers);
+                }
+                if (userFilter) {
+                    userFilter.addEventListener('change', filterUsers);
+                }
+            }, 100);
+        });
+
+        function filterUsers() {
+            const searchTerm = document.getElementById('user-search').value.toLowerCase();
+            const filterType = document.getElementById('user-filter').value;
+            
+            let filtered = allUsers.filter(user => {
+                const matchesSearch = !searchTerm || 
+                    user.username.toLowerCase().includes(searchTerm) ||
+                    user.id.toString().includes(searchTerm);
+                
+                let matchesFilter = true;
+                switch(filterType) {
+                    case 'paid':
+                        matchesFilter = user.fee_paid;
+                        break;
+                    case 'unpaid':
+                        matchesFilter = !user.fee_paid;
+                        break;
+                    case 'admin':
+                        matchesFilter = user.role === 'admin';
+                        break;
+                }
+                
+                return matchesSearch && matchesFilter;
+            });
+            
+            displayUserList(filtered);
+        }
+
+        // Open access management modal
+        function openAccessModal(noteId, noteTitle) {
+            currentNoteId = noteId;
+            document.getElementById('modal-title').textContent = `🔑 Manage Access - ${noteTitle}`;
+            document.getElementById('accessModal').style.display = 'block';
+            loadCurrentAccess(noteId);
+        }
+
+        // Close access modal
+        function closeAccessModal() {
+            document.getElementById('accessModal').style.display = 'none';
+            document.getElementById('user-id-input').value = '';
+            document.getElementById('user-preview').classList.add('hidden');
+            currentNoteId = null;
+        }
+
+        // Preview user when typing ID
+        function previewUser() {
+            const userId = document.getElementById('user-id-input').value;
+            const previewDiv = document.getElementById('user-preview');
+            
+            if (!userId) {
+                previewDiv.classList.add('hidden');
+                return;
+            }
+            
+            const user = allUsers.find(u => u.id.toString() === userId);
+            
+            if (user) {
+                previewDiv.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="background: #667eea; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                            ${user.username.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: #2c3e50;">${user.username}</div>
+                            <div style="font-size: 12px; color: #6c757d;">
+                                ${user.role === 'admin' ? '👨‍💼 Admin' : '👤 User'} • 
+                                ${user.fee_paid ? '💰 Fee Paid' : '⏳ Fee Pending'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                previewDiv.classList.remove('hidden', 'not-found');
+            } else {
+                previewDiv.innerHTML = `
+                    <div style="text-align: center; color: #dc3545;">
+                        <div style="font-weight: 600;">❌ User not found</div>
+                        <div style="font-size: 12px;">Please check the User ID</div>
+                    </div>
+                `;
+                previewDiv.classList.remove('hidden');
+                previewDiv.classList.add('not-found');
+            }
+        }
+
+        // Grant access to user
+        async function grantAccessToUser() {
+            const userId = document.getElementById('user-id-input').value;
+            
+            if (!userId || !currentNoteId) return;
+            
+            const user = allUsers.find(u => u.id.toString() === userId);
+            if (!user) {
+                showMessage('User not found!', false);
+                return;
+            }
+
+            try {
+                const response = await fetch('grant_access.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        note_id: currentNoteId,
+                        user_id: parseInt(userId)
+                    })
+                });
+
+                const data = await response.json();
+                showMessage(data.message, data.status === 'success');
+                
+                if (data.status === 'success') {
+                    document.getElementById('user-id-input').value = '';
+                    document.getElementById('user-preview').classList.add('hidden');
+                    loadCurrentAccess(currentNoteId);
+                }
+            } catch (error) {
+                showMessage('Error granting access. Please try again.', false);
+            }
+        }
+
+        // Load current access for a note
+        async function loadCurrentAccess(noteId) {
+            try {
+                // First try to get note access, if endpoint doesn't exist, show fallback
+                const response = await fetch(`get_note_access.php?note_id=${noteId}`);
+                
+                if (!response.ok) {
+                    // If endpoint doesn't exist, show a helpful message
+                    document.getElementById('current-access').innerHTML = `
+                        <div style="text-align: center; color: #f39c12; padding: 20px; background: #fef9e7; border-radius: 8px; border: 1px solid #f39c12;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">⚠️ Access Management Unavailable</div>
+                            <div style="font-size: 14px;">Please create the get_note_access.php endpoint to view current access list.</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const data = await response.json();
+                const accessDiv = document.getElementById('current-access');
+                
+                if (data.status === 'success' && data.data && data.data.length > 0) {
+                    accessDiv.innerHTML = data.data.map(access => `
+                        <div class="access-item">
+                            <div>
+                                <span style="font-weight: 600;">${escapeHtml(access.username)}</span>
+                                <span style="font-size: 12px; color: #6c757d; margin-left: 8px;">ID: ${access.user_id}</span>
+                            </div>
+                            <button onclick="revokeAccess(${noteId}, ${access.user_id}, '${escapeHtml(access.username)}')" 
+                                    class="btn btn-small" 
+                                    style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);">
+                                🗑️ Revoke
+                            </button>
+                        </div>
+                    `).join('');
+                } else {
+                    accessDiv.innerHTML = '<div style="text-align: center; color: #6c757d; padding: 20px;">No users have access to this note yet.</div>';
+                }
+            } catch (error) {
+                console.error('Error loading access:', error);
+                document.getElementById('current-access').innerHTML = `
+                    <div style="text-align: center; color: #f39c12; padding: 20px; background: #fef9e7; border-radius: 8px; border: 1px solid #f39c12;">
+                        <div style="font-weight: 600; margin-bottom: 8px;">⚠️ Access List Unavailable</div>
+                        <div style="font-size: 14px;">Please create the backend endpoint: get_note_access.php</div>
+                        <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;">Access granting will still work with your existing grant_access.php</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Revoke access
+        async function revokeAccess(noteId, userId, username) {
+            if (!confirm(`Are you sure you want to revoke access for "${username}"?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch('revoke_access.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        note_id: noteId,
+                        user_id: userId
+                    })
+                });
+
+                if (!response.ok) {
+                    showMessage('Revoke access endpoint not available. Please create revoke_access.php', false);
+                    return;
+                }
+
+                const data = await response.json();
+                showMessage(data.message, data.status === 'success');
+                
+                if (data.status === 'success') {
+                    loadCurrentAccess(noteId);
+                }
+            } catch (error) {
+                console.error('Revoke access error:', error);
+                showMessage('Error revoking access. Please create revoke_access.php endpoint.', false);
+            }
+        }
+
+        // View user access (from user list)
+        async function viewUserAccess(userId, username) {
+            try {
+                const response = await fetch(`get_user_access.php?user_id=${userId}`);
+                const data = await response.json();
+                
+                let accessList = '';
+                if (data.status === 'success' && data.data.length > 0) {
+                    accessList = data.data.map(note => 
+                        `<li style="padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <strong>${escapeHtml(note.title)}</strong> 
+                            <span class="note-subject">${note.subject}</span>
+                        </li>`
+                    ).join('');
+                } else {
+                    accessList = '<li style="color: #6c757d; padding: 20px; text-align: center;">No access granted yet</li>';
+                }
+                
+                const message = `
+                    <div style="max-width: 400px;">
+                        <h3 style="margin-bottom: 16px; color: #2c3e50;">📋 Access for ${username} (ID: ${userId})</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; max-height: 300px; overflow-y: auto;">
+                            ${accessList}
+                        </ul>
+                    </div>
+                `;
+                
+                // Create a custom modal for this
+                showCustomModal('User Access Details', message);
+                
+            } catch (error) {
+                showMessage('Error loading user access. Please try again.', false);
+            }
+        }
+
+        // Show custom modal
+        function showCustomModal(title, content) {
+            const existingModal = document.getElementById('customModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            const modal = document.createElement('div');
+            modal.id = 'customModal';
+            modal.className = 'modal';
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>${title}</h3>
+                        <span class="close" onclick="document.getElementById('customModal').remove()">&times;</span>
+                    </div>
+                    <div>${content}</div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Close on outside click
+            modal.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.remove();
+                }
+            };
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeAccessModal();
+                const customModal = document.getElementById('customModal');
+                if (customModal) {
+                    customModal.remove();
+                }
+            }
+        });
+
+        // Close modal on outside click
+        document.getElementById('accessModal').onclick = function(event) {
+            if (event.target === this) {
+                closeAccessModal();
+            }
+        };
+
+        // User features
+        function toggleFavorite(noteId) {
+            const index = userFavorites.indexOf(noteId);
+            if (index > -1) {
+                userFavorites.splice(index, 1);
+            } else {
+                userFavorites.push(noteId);
+            }
+            localStorage.setItem('userFavorites', JSON.stringify(userFavorites));
+            
+            // Update display
+            displayNotes(currentView === 'all' ? allNotes : getFilteredNotes());
+            showMessage(index > -1 ? 'Removed from favorites' : 'Added to favorites', true);
+        }
+
+        function showMyAccess() {
+            currentView = 'my-access';
+            const accessibleNotes = allNotes.filter(note => note.hasAccess);
+            displayNotes(accessibleNotes);
+            highlightActiveButton('my-access');
+        }
+
+        function showFavorites() {
+            currentView = 'favorites';
+            const favoriteNotes = allNotes.filter(note => userFavorites.includes(note.id));
+            displayNotes(favoriteNotes);
+            highlightActiveButton('favorites');
+        }
+
+        function showAllNotes() {
+            currentView = 'all';
+            displayNotes(allNotes);
+            highlightActiveButton('all');
+        }
+
+        function highlightActiveButton(activeView) {
+            // Reset all buttons
+            document.querySelectorAll('#user-features .btn').forEach(btn => {
+                btn.style.opacity = '0.7';
+                btn.style.transform = 'scale(1)';
+            });
+            
+            // Highlight active button
+            let activeBtn;
+            switch(activeView) {
+                case 'my-access':
+                    activeBtn = document.querySelector('[onclick="showMyAccess()"]');
+                    break;
+                case 'favorites':
+                    activeBtn = document.querySelector('[onclick="showFavorites()"]');
+                    break;
+                case 'all':
+                    activeBtn = document.querySelector('[onclick="loadNotes()"]');
+                    break;
+            }
+            
+            if (activeBtn) {
+                activeBtn.style.opacity = '1';
+                activeBtn.style.transform = 'scale(1.05)';
+            }
+        }
+
+        function updateUserDashboard() {
+            if (currentUser && currentUser.role !== 'admin') {
+                const totalNotes = allNotes.length;
+                const accessibleNotes = allNotes.filter(note => note.hasAccess).length;
+                const favorites = userFavorites.length;
+                const requests = userRequests.length;
+                
+                document.getElementById('my-total-notes').textContent = totalNotes;
+                document.getElementById('my-accessible-notes').textContent = accessibleNotes;
+                document.getElementById('my-favorites').textContent = favorites;
+                document.getElementById('my-requests').textContent = requests;
+            }
+        }
+
+        function getFilteredNotes() {
+            switch(currentView) {
+                case 'my-access':
+                    return allNotes.filter(note => note.hasAccess);
+                case 'favorites':
+                    return allNotes.filter(note => userFavorites.includes(note.id));
+                default:
+                    return allNotes;
+            }
+        }
+
+        function isNoteNew(note) {
+            if (!note.created_at) return false;
+            const noteDate = new Date(note.created_at);
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            return noteDate > weekAgo;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 1) return 'Today';
+            if (diffDays === 2) return 'Yesterday';
+            if (diffDays <= 7) return `${diffDays} days ago`;
+            return date.toLocaleDateString();
+        }
+
+        function trackDownload(noteId) {
+            // Track download for analytics (you can send this to your backend)
+            console.log(`Note ${noteId} downloaded by user ${currentUser.id}`);
+            
+            // You could send this to a tracking endpoint:
+            // fetch('track_download.php', { method: 'POST', body: JSON.stringify({note_id: noteId, user_id: currentUser.id}) });
+        }
+
+        // Enhanced filter function to work with current view
+        function filterNotes() {
+            const subjectFilter = document.getElementById('subject-filter').value;
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+
+            let baseNotes = getFilteredNotes();
+            
+            let filteredNotes = baseNotes.filter(note => {
+                const matchesSubject = !subjectFilter || note.subject === subjectFilter;
+                const matchesSearch = !searchTerm || 
+                    note.title.toLowerCase().includes(searchTerm) ||
+                    (note.description && note.description.toLowerCase().includes(searchTerm));
+                
+                return matchesSubject && matchesSearch;
+            });
+
+            displayNotes(filteredNotes);
+        }
+
+        // Update the original loadNotes function to reset view
+        const originalLoadNotes = loadNotes;
+        loadNotes = function() {
+            currentView = 'all';
+            highlightActiveButton('all');
+            originalLoadNotes();
+        };
+    </script>
+</body>
+</html>
